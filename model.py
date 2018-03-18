@@ -4,7 +4,11 @@ from representations import representations
 
 
 reps = representations()
-data = reps.bow()
+data = reps.tfidf(n=10)
+
 
 classifier = classifiers(data[0], data[1])
-print(classifier.classify_lggistic(is_sparse=True))
+print(classifier.classify_lggistic())
+print(classifier.naive_bayes())
+print(classifier.SVM())
+# print(classifier.FFNet())
