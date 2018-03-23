@@ -1,6 +1,9 @@
 import numpy as np 
 from sklearn.datasets import load_svmlight_file
 from sklearn.preprocessing import binarize
+import gensim
+from gensim.scripts.glove2word2vec import glove2word2vec
+from gensim.models import KeyedVectors
 
 class representations():
 
@@ -78,3 +81,45 @@ class representations():
             return small_train, small_test
 
         return data_train, data_test
+
+    def V_routine(self, model, n=None):
+        f = open('aclImdb/imdb.vocab')
+        vocab = f.read().splitlines()
+        dims = len(model["cat"])
+        word_vecs = np.zeros((len(vocab),dims))
+        
+        s_dim = 0
+        for word in vocab:
+            if word in model:
+                word_vecs[s_dim] = model[word]
+            s_dim+=1
+        del model
+
+        if(n):
+            n_data_tr = n
+            n_data_te = n
+        else:
+            n_data_tr = len(self.data_train)
+            n_data_te = len(self.data_test)
+
+        X_tr = self.data_train[0][0:n_data_tr].todense()
+        X_te = self.data_test[0][0:n_data_te].todense()
+
+        train_data = np.dot(X_tr, word_vecs)/np.sum(X_tr,axis=0), self.data_train[1][0:n_data_tr]
+        test_data = np.dot(X_te, word_vecs)/np.sum(X_te,axis=0), self.data_test[1][0:n_data_te]
+
+        return train_data,test_data
+
+    def w2v(self,n=None):
+        model = KeyedVectors.load_word2vec_format('~/Downloads/GoogleNews-vectors-negative300.bin', binary=True)
+
+        return self.V_routine(model,n)
+
+    def glove(self,n=None):
+        glove_input_file = '~/Downloads/glove.6B.100d.txt'
+        word2vec_output_file = '~/Downloads/glove.6B.100d.txt.word2vec'
+        glove2word2vec(glove_input_file, word2vec_output_file)
+        print("-----")
+        model = KeyedVectors.load_word2vec_format(word2vec_output_file, binary=False)
+        print("======")
+        return self.V_routine(model, n)

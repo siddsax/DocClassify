@@ -1,6 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 class classifiers():
@@ -22,9 +23,12 @@ class classifiers():
         classifier = LogisticRegression().fit(self.train[0], self.train[1])
         return self.results(classifier)
 
-    def naive_bayes(self):
+    def naive_bayes(self,flg=0):
 
-        classifier = GaussianNB().fit(self.train[0], self.train[1])
+        if(flag):
+            classifier = GaussianNB().fit(self.train[0], self.train[1])
+        else:
+            classifier = MultinomialNB().fit(self.train[0], self.train[1])
         return self.results(classifier)
 
     def SVM(self):
